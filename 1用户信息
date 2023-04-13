@@ -1,0 +1,283 @@
+package com.moyida.linkage;
+import java.lang.constant.Constable;
+import java.util.Scanner;
+ 
+public class JavaOk {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.println("=============首页==============");
+            System.out.println("1、登录");
+            System.out.println("2、注册");
+            int reg = sc.nextInt();
+            switch (reg) {
+                case 1:
+                    //登录
+                    while (true) {
+                        System.out.println("=============登陆页面==============");
+                        System.out.println("请您输入账号");
+                        String acc = sc.next();
+                        System.out.println("请您输入密码");
+                        String pass = sc.next();
+                        String sum = JavaTest.UserType(acc, pass);
+                        if (sum == null) {
+                            System.out.println("对不起，查无此人,请重新输入");
+                            break;
+                        }
+//                        int a = Integer.parseInt(sum);
+//                        String a=sum;
+                        //判断用户类型，登录账号，返回1表示老师，返回2表示学生，返回null表示查无此人
+                        System.out.println("返回的数据是" + sum);
+                        switch (sum) {
+                            case "1":
+                                System.out.println("欢迎管理员登录");
+                                conservator(sc);
+                                break;
+                            case "2":
+                                System.out.println("欢迎学生登录");
+                                operate(sc, acc);
+                                break;
+                            default:
+                                System.out.println("对不起，查无此人");
+                                break;
+                        }
+                        break;
+                    }
+                case 2:
+                    //注册
+                    Register(sc);
+                    break;
+                default:
+                    System.out.println("您输入的命令错误，请重新输入！");
+                    break;
+            }
+        }
+    }
+ 
+    /**
+     * 注册
+     *
+     * @param sc
+     */
+    private static void Register(Scanner sc) {
+        System.out.println("=============注册页面==============");
+        System.out.println("请输入要注册的账号（学号）");
+        String number = sc.next();
+        //查询数据库中有无该账号
+        Constable aaa = JavaTest.ReaderTable(number);
+        if (aaa == null) {
+            //没有账号，可以进行
+            System.out.println("请输入您的名字");
+            String name = sc.next();
+            System.out.println("请输入您的性别");
+            String sex = sc.next();
+            System.out.println("请输入您的类型  学生 2/管理员 1");
+            int kind = sc.nextInt();
+            System.out.println("请输入您的登录密码：");
+            String pass = sc.next();
+            //调用注册方法
+            JavaTest.AddReaders(number, name, sex, String.valueOf(kind), pass);
+            System.out.println("注册成功！");
+            //打印注册信息
+            System.out.println("您的注册信息如下：");
+            JavaTest.PrintReader(number);
+        }else {
+            System.out.println("该账号已注册!");
+        }
+ 
+    }
+ 
+    /**
+     * 管理员操作页面
+     *
+     * @param sc
+     */
+    private static void conservator(Scanner sc) {
+        while (true) {
+            System.out.println("=============操作页面==============");
+            System.out.println("0、退出");
+            System.out.println("1、添加图书表书籍");
+            System.out.println("2、添加图书类别信息");
+            System.out.println("3、图书废弃");
+            System.out.println("4、图书下架");
+            System.out.println("5、查询全部图书信息");
+            int i = sc.nextInt();
+            switch (i) {
+                case 0:
+                    System.out.println("已退出账号，欢迎再次登录！");
+                    return;
+                case 1:
+                    System.out.println("=============添加书籍页面==============");
+                    System.out.println("图书名称");
+                    String name = sc.next();
+                    System.out.println("图书类别");
+                    String category = sc.next();
+                    System.out.println("作者");
+                    String author = sc.next();
+                    System.out.println("出版社");
+                    String press = sc.next();
+                    System.out.println("出版日期");
+                    String pdate = sc.next();
+                    System.out.println("要存的数量");
+                    String quantity = sc.next();
+                    String charu = JavaTest.AddBooks(name, category, author, press, pdate, quantity);
+                    System.out.println("添加成功");
+                    break;
+                case 2:
+                    System.out.println("=============添加图书类别页面==============");
+                    System.out.println("输入类别编号");
+                    int leibie = sc.nextInt();
+                    System.out.println("输入类别名称");
+                    String name1 = sc.next();
+                    JavaTest.AddCategories(leibie, name1);
+                    System.out.println("添加成功");
+                    break;
+                case 3:
+                    System.out.println("=============图书废弃页面==============");
+                    System.out.println("请输入要废弃图书的图书编号");
+                    String reduce = sc.next();
+                    System.out.println("您要废除的书籍是：");
+                    System.out.println(JavaTest.BookInformation(reduce));
+                    System.out.println("是否确认废除y/n");
+                    String rs = sc.next();
+                    switch (rs) {
+                        case "y":
+                            //可以废除
+                            String ff = JavaTest.BooksAbandoned(reduce);
+                            System.out.println(JavaTest.BookInformation(reduce));
+                            System.out.println("废弃成功，该图书减一");
+                            break;
+                        default:
+                            System.out.println("您取消废除，当前书籍继续保留~");
+                    }
+ 
+                    break;
+                case 4:
+                    System.out.println("=============图书下架页面==============");
+                    System.out.println("请输入要下架图书的图书编号");
+                    String reduce1 = sc.next();
+                    System.out.println("您要下架的书籍是：");
+                    System.out.println(JavaTest.BookInformation(reduce1));
+                    System.out.println("是否确认把该图书下架y/n");
+                    String rs1 = sc.next();
+                    switch (rs1) {
+                        case "y":
+                            //可以废除
+                            String ff = JavaTest.BooksAbandoned(reduce1);
+                            System.out.println(JavaTest.Undercarriage(reduce1));
+                            System.out.println("下架成功，图书已从图书系统中去除");
+                            break;
+                        default:
+                            System.out.println("您取消废除，当前书籍继续保留~");
+                    }
+                    break;
+                case 5:
+                    //查看所有书籍
+                    JavaTest.AllBookInformation();
+                    break;
+                default:
+                    System.out.println("输入错误！");
+                    break;
+            }
+        }
+    }
+ 
+    /**
+     * 学生操作页面
+     *
+     * @param sc
+     */
+    private static void operate(Scanner sc, String acc) {
+        while (true) {
+            System.out.println("=============学生操作页面==============");
+            System.out.println("0、退出");
+            System.out.println("1、查看所有书籍");
+            System.out.println("2、借书");
+            System.out.println("3、还书");
+            String student = sc.next();
+            switch (student) {
+                case "0":
+                    System.out.println("已退出账号，欢迎再次登录！");
+                    return;
+                case "1":
+                    //查看所有书籍
+                    JavaTest.AllBookInformation();
+                    break;
+                case "2":
+                    //借书
+                    //                public static boolean BorrowBooks(String rnumber, String bnumber, String quantity) {
+                    System.out.println("请输入要借的书籍编号");
+                    String Borrow = sc.next();
+                    System.out.println("您要借的书籍是：");
+                    System.out.println(JavaTest.BookInformation(Borrow));
+                    System.out.println("是否借该图书？y/n");
+                    String rs1 = sc.next();
+                    switch (rs1) {
+                        case "y":
+                            //可以借书
+                            System.out.println("您要借几本书？");
+                            String books = sc.next();
+                            JavaTest.BorrowBooks(acc, Borrow, books);
+                            System.out.println("借书完成，您的借书信息如下");
+                            //打印借书信息
+                            JavaTest.BookTable(acc, Borrow);
+                            System.out.println("");
+                            break;
+                        default:
+                            System.out.println("您取消借书操作，欢迎再次使用！");
+                    }
+                    break;
+                case "3":
+                    //还书
+                    System.out.println("您可以还的书籍如下");
+                    JavaTest.NumberBookTable(acc);
+                    System.out.println("");
+                    System.out.println("请输入要还的书籍编号");
+                    String AlsoBook = sc.next();
+                    System.out.println("您要还的书籍是：");
+                    //打印借书信息
+                    JavaTest.BookTable(acc, AlsoBook);
+                    //再次确定归还
+                    System.out.println("是否还该图书？y/n");
+                    String rs2 = sc.next();
+                    switch (rs2) {
+                        case "y":
+                            //可以还书
+                            System.out.println("您要还此编号的几本书？");
+                            String books = sc.next();
+                            // 还书
+                            JavaTest.AlsoBook(acc, AlsoBook, books);
+                            //查询欠费账单有没有欠费
+                            String bill = JavaTest.ArrearageTable(acc, AlsoBook);
+                            if (bill == null) {
+                                //可以了
+                                System.out.println("还书完成，您还有此类书籍尚为归还");
+                                //打印借书信息
+                                JavaTest.BookTable(acc, AlsoBook);
+                                break;
+                            } else {
+                                //钱没还
+                                while (true) {
+                                    System.out.println("您欠费的金额是" + bill);
+                                    System.out.println("如已支付，请输入内容：支付完成");
+                                    String ff = sc.next();
+                                    String dd = "支付完成";
+                                    if (ff.equals(dd)) {
+                                        //删除欠费账单
+                                        JavaTest.repayment(acc, AlsoBook);
+                                        //打印借书信息
+                                        System.out.println("还书完成，您还有此类书籍尚为归还");
+                                        //打印借书信息
+                                        JavaTest.BookTable(acc, AlsoBook);
+                                        break;
+                                    } else {
+                                        System.out.println("支付失败，请完成支付");
+                                    }
+                                }
+                            }
+                    }
+            }
+        }
+ 
+    }
+}
